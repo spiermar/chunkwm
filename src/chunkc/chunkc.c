@@ -89,7 +89,7 @@ int main(int argc, char **argv)
                 break;
             }
 
-            if((fds[0].revents&(POLLIN | POLLPRI)) == (POLLIN | POLLPRI)) {
+            if(((fds[0].revents&POLLIN) == POLLIN) || ((fds[0].revents&POLLPRI) == POLLPRI)) {
                 if ((num_bytes = recv(sock_fd, response, sizeof(response) - 1, 0)) > 0) {
                     response[num_bytes] = '\0';
                     printf("%s", response);
