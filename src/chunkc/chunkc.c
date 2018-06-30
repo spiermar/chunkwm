@@ -90,6 +90,9 @@ int main(int argc, char **argv)
                 } else {
                     break;
                 }
+            } else {
+                fprintf(stderr, "chunkc: failed to receive data!\n");
+                break;
             }
         }
     }
