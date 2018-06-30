@@ -78,11 +78,18 @@ int main(int argc, char **argv)
             { STDOUT_FILENO, POLLHUP, 0 },
         };
 
-        while (poll(fds, 2, -1) > 0) {
-            if (fds[1].revents & (POLLERR | POLLHUP)) {
+        while (poll(fds, (unsigned long)2, -1) > 0) {
+            if(((fds[0].revents&POLLHUP) == POLLHUP) ||
+                ((fds[0].revents&POLLERR) == POLLERR) ||
+                ((fds[0].revents&POLLNVAL) == POLLNVAL) ||
+                ((fds[1].revents&POLLHUP) == POLLHUP) ||
+                ((fds[1].revents&POLLERR) == POLLERR) ||
+                ((fds[1].revents&POLLNVAL) == POLLNVAL)
+            ) {
                 break;
             }
-            if (fds[0].revents & POLLIN) {
+
+            if((fds[0].revents&(POLLIN | POLLPRI)) == (POLLIN | POLLPRI)) {
                 if ((num_bytes = recv(sock_fd, response, sizeof(response) - 1, 0)) > 0) {
                     response[num_bytes] = '\0';
                     printf("%s", response);
@@ -90,9 +97,6 @@ int main(int argc, char **argv)
                 } else {
                     break;
                 }
-            } else {
-                fprintf(stderr, "chunkc: failed to receive data!\n");
-                break;
             }
         }
     }
